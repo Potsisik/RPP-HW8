@@ -9,7 +9,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         #потом добавлю эти функции
         self.pushButton_3.clicked.connect(self.calculate) 
-        #self.pushButton.clicked.connect(self.save_project)
+        self.pushButton.clicked.connect(self.save_project)
         #self.pushButton_2.clicked.connect(self.load_project)
 
     def get_values(self): #собираем значения полей делаем из них словарь
@@ -46,6 +46,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 
         print(parametrs)
         return parametrs
+    
+    def save_project(self):  # Сохранение проекта в виде файла
+        filename = QFileDialog.getSaveFileName(self, "Выберите файл", '', 'Файл проекта (*.json)')
+        data = self.get_values()
+
+        #проверка на ошибки
+        if data == None:
+            return
+        if filename[0] == '':
+            print("ошибка: название файла пустое")
+            return 
+        
+        self.lineEdit.setText(filename[0])
+        with open(filename[0], 'w') as f:
+            json.dump(data, f)
     
     def calculate(self):
         print("выполняется расчет")
