@@ -33,7 +33,7 @@ class MPLWidget(QtWidgets.QWidget):
 
     def clear_graph(self):
         self.canvas.ax.cla()
-        self.canvas.ax.set_xlabel('Длина L') #может потом переделать как передаваемую переменную
+        #self.canvas.ax.set_xlabel('Длина L') #может потом переделать как передаваемую переменную
 
     def draw_graph(self, graph: dict, new_label: str):
         #self.clear_graph()

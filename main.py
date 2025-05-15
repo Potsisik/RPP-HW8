@@ -1,7 +1,10 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QFileDialog, QMessageBox
 import sys 
 from ui_mainWindow import Ui_MainWindow
+from backend import Math_Model
 import json
+
+math_model = Math_Model() #создали матмодель
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -110,7 +113,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if dict_ is None:
             return
+        
         #потом тут надо что нибудь посчитать
+        math_model.set_values(dict_) #передавать словарь
+        res = math_model.calculate() #получаем тоже словарь
+
+        self.label_0.setText("что-то посчиталось") #временно
+        # в будущем вызывать тут отдельный метод отвечающий за нарисовку графиков
+        #self.draw_graphs(res['graphs'])
+
+    def draw_graphs(self, graphs: dict): #пока нерабочий
+        self.widget.clear_graph()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
