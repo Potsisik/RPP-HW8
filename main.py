@@ -10,7 +10,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #потом добавлю эти функции
         self.pushButton_3.clicked.connect(self.calculate) 
         self.pushButton.clicked.connect(self.save_project)
-        #self.pushButton_2.clicked.connect(self.load_project)
+        self.pushButton_2.clicked.connect(self.load_project)
 
     def get_values(self): #собираем значения полей делаем из них словарь
         parametrs = {}
@@ -61,6 +61,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.lineEdit.setText(filename[0])
         with open(filename[0], 'w') as f:
             json.dump(data, f)
+
+    def set_values(self, parametrs): #Заполняет текстовые поля значениями из словаря
+        if not parametrs or not isinstance(parametrs, dict): #проверка что мы передали именно словарь
+            print("parametrs не является словарем")
+            QMessageBox.critical(None, "Ошибка", "Неверный формат данных")
+            return False
+        
+        try:
+            self.lineEdit_2.setText(str(parametrs["a"]))
+            self.lineEdit_3.setText(str(parametrs["b"]))
+            self.lineEdit_4.setText(str(parametrs["x"]))
+            self.lineEdit_5.setText(str(parametrs["y"]))
+            self.lineEdit_6.setText(str(parametrs["n"]))
+            self.lineEdit_7.setText(str(parametrs["time"]))
+            self.lineEdit_8.setText(str(parametrs["lym"]))
+
+            #овал
+            self.lineEdit_9.setText(str(parametrs["r1"]))
+            self.lineEdit_10.setText(str(parametrs["r2"]))
+            self.lineEdit_11.setText(str(parametrs["thickness"]))
+            
+            return True
+        
+        except Exception as e:
+            print(f"Ошибка при установке значений: {e}")
+            QMessageBox.critical(None, "Ошибка", "Данные некорректны")
+            return False
+        
+    def load_project(self):  # Загрузка проекта из файла
+        filename = QFileDialog.getOpenFileName(self, "Выберите файл", '', 'Файл проекта (*.json)')
+        if filename[0] == '':
+            print("ошибка: название файла пустое")
+            return
+        self.lineEdit.setText(filename[0])
+
+        with open(filename[0], 'r') as f:
+            data = json.load(f) #отловить тут ошибку
+        
+        if data == None:
+            print("файл пустой")
+            return
+        self.set_values(data)
     
     def calculate(self):
         print("выполняется расчет")
