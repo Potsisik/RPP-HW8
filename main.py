@@ -25,12 +25,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         parametrs["n"] = self.lineEdit_6.text()
         parametrs["time"] = self.lineEdit_7.text()
         parametrs["lym"] = self.lineEdit_8.text()
+        parametrs["thickness"] = self.lineEdit_13.text()
 
         #овал
         #потом узнать как понимать какая вкладка выбрана
         parametrs["r1"] = self.lineEdit_9.text()
         parametrs["r2"] = self.lineEdit_10.text()
-        parametrs["thickness"] = self.lineEdit_11.text()
+        #круг
+        parametrs["r"] = self.lineEdit_11.text()
+        #квадрат
+        parametrs["side_length"] = self.lineEdit_12.text()
+
 
         for key, value in parametrs.items(): #проверка на пустые строки
             if value is None or value == '':
@@ -46,6 +51,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     print(f"Значение '{value}' для ключа '{key}' не может быть преобразовано в float")
                     QMessageBox.critical(None, "Ошибка", "Поля заполненны некорректно")
                     return None
+                
+        parametrs["figure"] = self.tabWidget_2.currentIndex()
+        # 0 - круг, 1 - овал, 2 - квадрат
                 
         print(parametrs)
         return parametrs

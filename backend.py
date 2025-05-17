@@ -13,21 +13,25 @@ class Math_Model():
         self.n = parametrs["n"]
         self.time = parametrs["time"] 
         self.lym = parametrs["lym"] #длина волны
-
-        #овал
-        #потом узнать как понимать какая вкладка выбрана
-        self.r1 = parametrs["r1"] 
-        self.r2 = parametrs["r2"] 
-        
         self.thickness = parametrs["thickness"]
+
+        self.figure = parametrs["figure"]
+
+        if self.figure == 1:
+            #овал
+            self.r1 = parametrs["r1"] 
+            self.r2 = parametrs["r2"]
+        elif self.figure == 0:
+            #круг
+            self.r = parametrs["r"] 
+        else:
+            #квадрат
+            self.side_length = parametrs["side_length"]
+                
 
         self.c = 3*10**8 #скорость света
 
-    #
-    # перенести сюда функции овала, круга и прямоугольника
-    # при надобности их изменить
-    #
-    def ellipse(self, x1, x2, y1, y2):
+    def ellipse(self, x1, x2, y1, y2, r1, r2):
         fdtd.set_backend("numpy")
         grid = fdtd.Grid(shape=(self.a, self.b, 1), grid_spacing=0.0000001, permittivity=1)
 
@@ -42,12 +46,14 @@ class Math_Model():
 
         # Эллипс
         X, Y = np.ogrid[:self.a, :self.b]
-        ellipse_mask = ((X - self.a // 2) / self.r1) ** 2 + ((Y - self.b // 2) / self.r2) ** 2 < 1
+        ellipse_mask = ((X - self.a // 2) / r1) ** 2 + ((Y - self.b // 2) / r2) ** 2 < 1
         permittivity = np.ones([self.a, self.b, 1])
         permittivity[ellipse_mask, 0] = self.n ** 2
         grid[:, :, 0] = fdtd.Object(permittivity=permittivity, name="circle")
 
-    def square_scatter(self, x1, x2, y1, y2, side_length):
+        return grid
+
+    def square_scatter(self, x1, x2, y1, y2):
         fdtd.set_backend("numpy")
         grid = fdtd.Grid(shape=(self.a, self.b, 1), grid_spacing=0.0000001, permittivity=1)
 
@@ -62,7 +68,7 @@ class Math_Model():
 
         # Создание квадрата
         X, Y = np.ogrid[:self.a, :self.b]
-        half_side = side_length // 2
+        half_side = self.side_length // 2
         center_x, center_y = self.a // 2, self.b // 2
 
         # Маска для квадрата
@@ -75,15 +81,13 @@ class Math_Model():
         return grid
 
     def calculate(self): #есть идея сначала привести полученные данные к нормальному виду
-        res = {'integral':{}, 'graphs':{}} #возвращаем словарь
-        #res {int{...}, grf{x{..}, y{y1, y2, y3...}} - структура
-        integral = res['integral'] #получаю внутренние словари для удобства
-        graphs = res['graphs']
 
-        #
-        # здесь нужно вызвать функцию овала или прямоугольника
-        #
-
-        integral['res_1'] = self.a * self.b #для примера
-        
-        return res
+        if self.figure == 1: #овал
+            return self.ellipse(self.x, (self.a - self.x), self.y, (self.b - self.x), self.r1, self.r2)
+        elif self.figure == 0: #круг
+            return self.ellipse(self.x, (self.a - self.x), self.y, (self.b - self.x), self.r, self.r)
+        elif self.figure == 2: #квадрат
+            return self.square_scatter(self.x, (self.a - self.x), self.y, (self.b - self.y))
+        else:
+            print("фигня какая-то")
+            return None
