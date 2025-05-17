@@ -3,6 +3,8 @@ from PySide6 import QtWidgets
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 import matplotlib
+import numpy as np
+import matplotlib.patches as patches
 
 # Ensure using PyQt5 backend
 matplotlib.use('QT5Agg')
@@ -30,6 +32,45 @@ class MPLWidget(QtWidgets.QWidget):
         self.vbl.addWidget(self.toolbar)
         self.vbl.addWidget(self.canvas)
         self.setLayout(self.vbl)
+
+    def visualize_square(self, tension, a, b, side_length, x, y):
+        """Визуализация поля с квадратным рассеивателем в виджете"""
+        # Очищаем предыдущий график
+        self.canvas.ax.clear()
+        
+        # Отображаем поле
+        img = self.canvas.ax.imshow(np.transpose(tension),
+                                  extent=[0, a, 0, b],
+                                  cmap='RdBu',
+                                  origin='lower',
+                                  vmin=-0.02,
+                                  vmax=0.02)
+
+        # Добавляем квадратный рассеиватель
+        center_x, center_y = a // 2, b // 2
+        square = patches.Rectangle((center_x - side_length / 2, center_y - side_length / 2),
+                                 side_length,
+                                 side_length,
+                                 linewidth=2,
+                                 edgecolor='black',
+                                 facecolor='none',
+                                 linestyle='--')
+        self.canvas.ax.add_patch(square)
+
+        # Добавляем источник и детектор
+        self.canvas.ax.scatter([x], [y], c='green', marker='*', s=100, label='Source')
+        self.canvas.ax.scatter([a - x], [b - y], c='red', marker='o', s=100, label='Detector')
+
+        # Настройки графика
+        self.canvas.fig.colorbar(img, ax=self.canvas.ax, label='Ez field amplitude')
+        self.canvas.ax.set_title(f'Рассеяние на квадрате (t)')
+        self.canvas.ax.set_xlabel('x (узлы сетки)')
+        self.canvas.ax.set_ylabel('y (узлы сетки)')
+        self.canvas.ax.legend()
+        self.canvas.ax.grid(True, alpha=0.3)
+        
+        # Перерисовываем холст
+        self.canvas.draw()
 
     def clear_graph(self):
         self.canvas.ax.cla()
