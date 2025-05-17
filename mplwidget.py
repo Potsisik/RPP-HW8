@@ -72,6 +72,41 @@ class MPLWidget(QtWidgets.QWidget):
         # Перерисовываем холст
         self.canvas.draw()
 
+    def draw_elipse(self, tension, a, b, r1, r2):
+        """Визуализация распределения напряженностей с эллиптическим рассеивателем"""
+        # Очищаем предыдущий график
+        self.canvas.ax.clear()
+        
+        # Отображаем поле напряженностей
+        img = self.canvas.ax.imshow(np.transpose(tension),
+                                   extent=[0, a, 0, b],
+                                   cmap="RdBu",
+                                   origin="lower",
+                                   vmin=-0.02,
+                                   vmax=0.02)
+        
+        # Добавляем эллиптический рассеиватель
+        border = patches.Ellipse((a // 2, b // 2), 
+                                2 * r1, 
+                                2 * r2, 
+                                edgecolor='black', 
+                                facecolor='none', 
+                                linewidth=0.5)
+        self.canvas.ax.add_patch(border)
+
+        # Настройки графика
+        self.canvas.ax.set_title("Распределение напряженностей")
+        self.canvas.ax.set_xlabel("x")
+        self.canvas.ax.set_ylabel("y")
+        
+        # Добавляем цветовую шкалу
+        cbar = self.canvas.fig.colorbar(img, ax=self.canvas.ax)
+        cbar.set_label("E(x, y)")
+        
+        # Автоматическая подгонка layout'а и перерисовка
+        self.canvas.fig.tight_layout()
+        self.canvas.draw()
+
     def clear_graph(self):
         self.canvas.ax.cla()
         #self.canvas.ax.set_xlabel('Длина L') #может потом переделать как передаваемую переменную

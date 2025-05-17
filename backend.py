@@ -27,6 +27,26 @@ class Math_Model():
     # перенести сюда функции овала, круга и прямоугольника
     # при надобности их изменить
     #
+    def ellipse(self, x1, x2, y1, y2):
+        fdtd.set_backend("numpy")
+        grid = fdtd.Grid(shape=(self.a, self.b, 1), grid_spacing=0.0000001, permittivity=1)
+
+        # Сетка
+        grid[y1:y2, x1, 0] = fdtd.LineSource(period=self.lym / self.c, name="source")
+        grid[y1:y2, x2, 0] = fdtd.LineDetector(name="detector")
+
+        grid[0:self.thickness, :, :] = fdtd.PML(name="pml_xlow")
+        grid[-self.thickness:, :, :] = fdtd.PML(name="pml_xhigh")
+        grid[:, 0:self.thickness, :] = fdtd.PML(name="pml_ylow")
+        grid[:, -self.thickness:, :] = fdtd.PML(name="pml_yhigh")
+
+        # Эллипс
+        X, Y = np.ogrid[:self.a, :self.b]
+        ellipse_mask = ((X - self.a // 2) / self.r1) ** 2 + ((Y - self.b // 2) / self.r2) ** 2 < 1
+        permittivity = np.ones([self.a, self.b, 1])
+        permittivity[ellipse_mask, 0] = self.n ** 2
+        grid[:, :, 0] = fdtd.Object(permittivity=permittivity, name="circle")
+
     def square_scatter(self, x1, x2, y1, y2, side_length):
         fdtd.set_backend("numpy")
         grid = fdtd.Grid(shape=(self.a, self.b, 1), grid_spacing=0.0000001, permittivity=1)
