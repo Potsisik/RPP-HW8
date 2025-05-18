@@ -1,5 +1,6 @@
 import numpy as np
 import fdtd
+#from ellipse import ellipse
 
 class Math_Model():
     def __init__(self): #зачем нам конструктор?
@@ -12,7 +13,7 @@ class Math_Model():
         self.y = parametrs["y"] 
         self.n = parametrs["n"]
         self.time = parametrs["time"] 
-        self.lym = parametrs["lym"] #длина волны
+        self.lym = parametrs["lym"] * 10 **-9 #длина волны
         self.thickness = parametrs["thickness"]
 
         self.figure = parametrs["figure"]
@@ -80,7 +81,7 @@ class Math_Model():
 
         return grid
 
-    def calculate(self): #есть идея сначала привести полученные данные к нормальному виду
+    def calculate(self):
 
         if self.figure == 1: #овал
             return self.ellipse(self.x, (self.a - self.x), self.y, (self.b - self.x), self.r1, self.r2)

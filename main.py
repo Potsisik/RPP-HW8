@@ -4,6 +4,8 @@ from ui_mainWindow import Ui_MainWindow
 from backend import Math_Model
 import json
 
+from ellipse import ellipse
+
 math_model = Math_Model() #создали матмодель
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -45,12 +47,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
         for key, value in parametrs.items(): #преобразуем строки во float
             if isinstance(value, str):
-                try:
-                    parametrs[key] = float(value)
-                except ValueError: # Обработка случая, когда строка не может быть преобразована в float
-                    print(f"Значение '{value}' для ключа '{key}' не может быть преобразовано в float")
-                    QMessageBox.critical(None, "Ошибка", "Поля заполненны некорректно")
-                    return None
+                if key == 'n': #костыли, так как флоат нужен только тут
+                    try:
+                        parametrs[key] = float(value)
+                    except ValueError: # Обработка случая, когда строка не может быть преобразована в float
+                        print(f"Значение '{value}' для ключа '{key}' не может быть преобразовано в float")
+                        QMessageBox.critical(None, "Ошибка", "Поля заполненны некорректно")
+                        return None
+                else:
+                    try:
+                        parametrs[key] = int(value)
+                    except ValueError: # Обработка случая, когда строка не может быть преобразована в int
+                        print(f"Значение '{value}' для ключа '{key}' не может быть преобразовано в int")
+                        QMessageBox.critical(None, "Ошибка", "Поля заполненны некорректно")
+                        return None
                 
         parametrs["figure"] = self.tabWidget_2.currentIndex()
         # 0 - круг, 1 - овал, 2 - квадрат
@@ -124,14 +134,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         #потом тут надо что нибудь посчитать
         math_model.set_values(dict_) #передавать словарь
-        res = math_model.calculate() #получаем тоже словарь
+
+        grid = math_model.calculate() #получаем сетку
+
+        grid.run(total_time=dict_["time"]) #запускаем
+        
+        self.widget2.draw_elipse(grid.E[:, :, 0, 2].real, dict_["a"], dict_["b"], dict_["r1"], dict_["r2"]) #рисуем
 
         self.label_0.setText("что-то посчиталось") #временно
-        # в будущем вызывать тут отдельный метод отвечающий за нарисовку графиков
-        #self.draw_graphs(res['graphs'])
-
-    def draw_graphs(self, graphs: dict): #пока нерабочий
-        self.widget.clear_graph()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
