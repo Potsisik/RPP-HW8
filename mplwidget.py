@@ -65,7 +65,7 @@ class MPLWidget(QtWidgets.QWidget):
         if not hasattr(self, 'cbar'):
             self.cbar = self.canvas.fig.colorbar(img, ax=self.canvas.ax)
             self.cbar.set_label("E(x, y)")
-            
+
         self.canvas.ax.set_title(f'Рассеяние на квадрате (t)')
         self.canvas.ax.set_xlabel('x (узлы сетки)')
         self.canvas.ax.set_ylabel('y (узлы сетки)')
@@ -75,7 +75,7 @@ class MPLWidget(QtWidgets.QWidget):
         # Перерисовываем холст
         self.canvas.draw()
 
-    def draw_elipse(self, tension, a, b, r1, r2):
+    def draw_elipse(self, tension, a, b, r1, r2, x, y):
         """Визуализация распределения напряженностей с эллиптическим рассеивателем"""
         # Очищаем предыдущий график
         self.canvas.ax.clear()
@@ -96,6 +96,10 @@ class MPLWidget(QtWidgets.QWidget):
                                 facecolor='none', 
                                 linewidth=0.5)
         self.canvas.ax.add_patch(border)
+
+        # Добавляем источник и детектор
+        self.canvas.ax.scatter([x], [y], c='green', marker='*', s=100, label='Source')
+        self.canvas.ax.scatter([a - x], [b - y], c='red', marker='o', s=100, label='Detector')
 
         # Настройки графика
         self.canvas.ax.set_title("Распределение напряженностей")

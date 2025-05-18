@@ -28,7 +28,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         parametrs["thickness"] = self.lineEdit_13.text()
 
         #овал
-        #потом узнать как понимать какая вкладка выбрана
         parametrs["r1"] = self.lineEdit_9.text()
         parametrs["r2"] = self.lineEdit_10.text()
         #круг
@@ -95,12 +94,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.lineEdit_6.setText(str(parametrs["n"]))
             self.lineEdit_7.setText(str(parametrs["time"]))
             self.lineEdit_8.setText(str(parametrs["lym"]))
+            self.lineEdit_13.setText(str(parametrs["thickness"]))
 
             #овал
             self.lineEdit_9.setText(str(parametrs["r1"]))
             self.lineEdit_10.setText(str(parametrs["r2"]))
-            self.lineEdit_11.setText(str(parametrs["thickness"]))
-            
+            #круг
+            self.lineEdit_11.setText(str(parametrs["r"]))
+            #квадрат
+            self.lineEdit_12.setText(str(parametrs["side_length"]))
+                        
             return True
         
         except Exception as e:
@@ -137,11 +140,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if grid == None: #проверка на ошибки
             return
         grid.run(total_time=dict_["time"]) #запускаем
-
+        #рисуем
         if dict_["figure"] == 1:        
-            self.widget2.draw_elipse(grid.E[:, :, 0, 2].real, dict_["a"], dict_["b"], dict_["r1"], dict_["r2"]) #рисуем
+            self.widget2.draw_elipse(grid.E[:, :, 0, 2].real, dict_["a"], dict_["b"], dict_["r1"], dict_["r2"], dict_['x'], dict_['y']) 
         elif dict_["figure"] == 0:
-            self.widget2.draw_elipse(grid.E[:, :, 0, 2].real, dict_["a"], dict_["b"], dict_["r"], dict_["r"])
+            self.widget2.draw_elipse(grid.E[:, :, 0, 2].real, dict_["a"], dict_["b"], dict_["r"], dict_["r"], dict_['x'], dict_['y'])
         else:
             self.widget2.visualize_square(grid.E[:, :, 0, 2].real, dict_["a"], dict_['b'], dict_["side_length"], dict_['x'], dict_['y'])
 
