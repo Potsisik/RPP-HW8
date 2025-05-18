@@ -62,7 +62,10 @@ class MPLWidget(QtWidgets.QWidget):
         self.canvas.ax.scatter([a - x], [b - y], c='red', marker='o', s=100, label='Detector')
 
         # Настройки графика
-        self.canvas.fig.colorbar(img, ax=self.canvas.ax, label='Ez field amplitude')
+        if not hasattr(self, 'cbar'):
+            self.cbar = self.canvas.fig.colorbar(img, ax=self.canvas.ax)
+            self.cbar.set_label("E(x, y)")
+            
         self.canvas.ax.set_title(f'Рассеяние на квадрате (t)')
         self.canvas.ax.set_xlabel('x (узлы сетки)')
         self.canvas.ax.set_ylabel('y (узлы сетки)')
@@ -79,11 +82,11 @@ class MPLWidget(QtWidgets.QWidget):
         
         # Отображаем поле напряженностей
         img = self.canvas.ax.imshow(np.transpose(tension),
-                                   extent=[0, a, 0, b],
-                                   cmap="RdBu",
-                                   origin="lower",
-                                   vmin=-0.02,
-                                   vmax=0.02)
+                                extent=[0, a, 0, b],
+                                cmap="RdBu",
+                                origin="lower",
+                                vmin=-0.02,
+                                vmax=0.02)
         
         # Добавляем эллиптический рассеиватель
         border = patches.Ellipse((a // 2, b // 2), 
@@ -99,9 +102,10 @@ class MPLWidget(QtWidgets.QWidget):
         self.canvas.ax.set_xlabel("x")
         self.canvas.ax.set_ylabel("y")
         
-        # Добавляем цветовую шкалу
-        cbar = self.canvas.fig.colorbar(img, ax=self.canvas.ax)
-        cbar.set_label("E(x, y)")
+        # Создаем новую цветовую шкалу и сохраняем ссылку
+        if not hasattr(self, 'cbar'):
+            self.cbar = self.canvas.fig.colorbar(img, ax=self.canvas.ax)
+            self.cbar.set_label("E(x, y)")
         
         # Автоматическая подгонка layout'а и перерисовка
         self.canvas.fig.tight_layout()

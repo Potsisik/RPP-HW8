@@ -4,8 +4,6 @@ from ui_mainWindow import Ui_MainWindow
 from backend import Math_Model
 import json
 
-from ellipse import ellipse
-
 math_model = Math_Model() #создали матмодель
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -136,10 +134,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         math_model.set_values(dict_) #передавать словарь
 
         grid = math_model.calculate() #получаем сетку
-
+        if grid == None: #проверка на ошибки
+            return
         grid.run(total_time=dict_["time"]) #запускаем
-        
-        self.widget2.draw_elipse(grid.E[:, :, 0, 2].real, dict_["a"], dict_["b"], dict_["r1"], dict_["r2"]) #рисуем
+
+        if dict_["figure"] == 1:        
+            self.widget2.draw_elipse(grid.E[:, :, 0, 2].real, dict_["a"], dict_["b"], dict_["r1"], dict_["r2"]) #рисуем
+        elif dict_["figure"] == 0:
+            self.widget2.draw_elipse(grid.E[:, :, 0, 2].real, dict_["a"], dict_["b"], dict_["r"], dict_["r"])
+        else:
+            self.widget2.visualize_square(grid.E[:, :, 0, 2].real, dict_["a"], dict_['b'], dict_["side_length"], dict_['x'], dict_['y'])
 
         self.label_0.setText("что-то посчиталось") #временно
 
