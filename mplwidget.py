@@ -114,13 +114,3 @@ class MPLWidget(QtWidgets.QWidget):
         # Автоматическая подгонка layout'а и перерисовка
         self.canvas.fig.tight_layout()
         self.canvas.draw()
-
-    def clear_graph(self):
-        self.canvas.ax.cla()
-        #self.canvas.ax.set_xlabel('Длина L') #может потом переделать как передаваемую переменную
-
-    def draw_graph(self, graph: dict, new_label: str):
-        #self.clear_graph()
-        self.canvas.ax.plot(graph['x'], graph['y'], label=new_label)
-        self.canvas.ax.legend()
-        self.canvas.draw()

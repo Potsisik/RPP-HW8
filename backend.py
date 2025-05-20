@@ -84,9 +84,9 @@ class Math_Model():
     def calculate(self):
 
         if self.figure == 1: #овал
-            return self.ellipse(self.x, (self.a - self.x), self.y, (self.b - self.x), self.r1, self.r2)
+            return self.ellipse(self.x, (self.a - self.x), self.y, (self.b - self.y), self.r1, self.r2)
         elif self.figure == 0: #круг
-            return self.ellipse(self.x, (self.a - self.x), self.y, (self.b - self.x), self.r, self.r)
+            return self.ellipse(self.x, (self.a - self.x), self.y, (self.b - self.y), self.r, self.r)
         elif self.figure == 2: #квадрат
             return self.square_scatter(self.x, (self.a - self.x), self.y, (self.b - self.y))
         else:
